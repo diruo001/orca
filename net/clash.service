@@ -1,0 +1,5 @@
+[Unit]
+Description=clash-core
+[Service]
+Type=simple
+ExecStart=/data/orca/net/clash -f /data/orca/net/config.yaml

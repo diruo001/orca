@@ -1,0 +1,85 @@
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+ipv6: false
+allow-lan: false
+mode: Rule
+log-level: info
+external-controller: '0.0.0.0:9090'
+
+# dns:
+#   enable: true
+#   ipv6: false
+#   listen: 0.0.0.0:53
+#   default-nameserver:
+#     - 114.114.114.114
+#   #enhanced-mode: redir-host
+#   enhanced-mode: fake-ip #如果要玩netflix，需要使用fake-ip
+#   fake-ip-range: 198.18.0.1/16
+#   nameserver:
+#     - 114.114.114.114
+#     - 223.5.5.5
+#     - tls://8.8.8.8:853
+#   fallback:
+#     - tls://8.8.8.8:853
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  listen: :53
+  default-nameserver:
+      - 210.5.56.145
+  nameserver:
+      - 114.114.114.114
+  fallback:
+      - https://8888.google/dns-query
+      - https://1.0.0.1/dns-query
+      - https://dns.twnic.tw/dns-query
+      - https://doh.opendns.com/dns-query
+      - https://dns-nyc.aaflalo.me/dns-query
+      - https://dns.aa.net.uk/dns-query
+      - https://sg.adhole.org/dns-query
+      - https://kaitain.restena.lu/dns-query
+      - https://hydra.plan9-ns1.com/dns-query
+      - https://jp.tiar.app/dns-query
+      - https://doh.asia.dnswarden.com/adblock
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+# 代理服务器
+proxies:
+  # http
+  - name: "https"
+    type: http
+    server: *****
+    port: 443
+    username: *****
+    password: "******"
+    tls: true # https
+    skip-cert-verify: true
+
+# 配置 Group
+proxy-groups:
+  # 自动切换
+  - name: "auto"
+    type: url-test
+    proxies:
+      - https
+
+    # tolerance: 150
+    url: 'https://www.google.com/'
+    interval: 300
+
+rules:
+# LAN
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+
+# 最终规则（除了中国区的IP之外的，全部翻墙）
+  - GEOIP,CN,DIRECT
+  - MATCH,auto
